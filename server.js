@@ -10,3 +10,6 @@ var mongoose = require('mongoose');
 var cheerio = require("cheerio");
 //    5. axios
 var axios = require("axios");
+
+// Initialize Express
+var app = express();
