@@ -1,6 +1,6 @@
 
-// 2. Run `npm init`. When that's finished, install and save these npm packages:
-
+// Run `npm init`. When that's finished, install and save these npm packages:
+var logger = require("morgan");
 // 1. express
 var express = require("express");
 // 2. express-handlebars
@@ -15,10 +15,21 @@ var axios = require("axios");
 // Initialize Express
 var app = express();
 
+// Configure middleware
+// Use morgan logger for logging requests
+app.use(logger("dev"));
+// Parse request body as JSON
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+// Make public a static folder
+app.use(express.static("public"));
+
 // If deployed, use the deployed database. Otherwise use the local mongoHeadlines database
 var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
 mongoose.connect(MONGODB_URI);
+
+// Routes
 
 // Make a request via axios to grab the HTML body from the site of your choice
 axios.get("https://www.fandango.com").then(function(response) {
