@@ -1,40 +1,20 @@
 
 var logger = require("morgan");
 var express = require("express");
-var express = require("express-handlebars");
+var exphbs = require("express-handlebars");
 var mongoose = require("mongoose");
 var cheerio = require("cheerio");
 var axios = require("axios");
 
 
-// Mongoose
+// Require all models
+var db = require("./models");
 
-var Note = require("./models/Note");
-var Article = require("./models/Article");
-var databaseUrl = 'mongodb://localhost/nyt';
-
-if (process.env.MONGODB_URI) {
-	mongoose.connect(process.env.MONGODB_URI);
-}
-else {
-	mongoose.connect(databaseUrl);
-};
-
-mongoose.Promise = Promise;
-var db = mongoose.connection;
-
-db.on("error", function(error) {
-	console.log("Mongoose Error: ", error);
-});
-
-db.once("open", function() {
-	console.log("Mongoose connection successful.");
-});
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();
 
-var PORT = process.env.PORT || 3000;
 
 // Configure middleware
 // Use morgan logger for logging requests
@@ -43,17 +23,17 @@ app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
-app.use(express.static(__dirname + "/public"));
+app.use(express.static("/public"));
 
 app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
 
+// Connect to the Mongo DB
 
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines";
 
+mongoose.connect(MONGODB_URI);
 
-app.listen(PORT, function() {
- console.log("Listening on port:" + PORT);
-});
 
 
 // Routes
@@ -134,3 +114,9 @@ app.get("/note/:id", function(req, res) {
 		res.send(data.note);
 	})
 })
+
+
+// Start the server
+app.listen(PORT, function() {
+	console.log("Listening on port:" + PORT);
+   });
