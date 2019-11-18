@@ -16,6 +16,23 @@ var ArticleSchema = new Schema({
     type: String,
     required: true
   },
+//   summary is required and of type String
+  summary: {
+      type: String,
+      default: "Sorry. No summary available."
+  },
+  isSaved: {
+      type: Boolean,
+      default: false,
+  },
+  status: {
+      type: String,
+      default: "Save Article"
+  },
+  created: {
+      type: Date,
+      default: Date.now
+  },
   // `note` is an object that stores a Note id
   // The ref property links the ObjectId to the Note model
   // This allows us to populate the Article with an associated Note
