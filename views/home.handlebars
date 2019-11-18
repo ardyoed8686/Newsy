@@ -31,7 +31,7 @@
   <img src="../public/styles/images/cup-of-coffee-and-newspaper-isolated-on-wood-background-2235.jpg" class="card-img" alt="coffee and newspaper">
   <div class="card-img-overlay">
     <h5 class="card-title">Mongo Scraper</h5>
-    <p class="card-text">New York Times Edition</p>
+    <p class="card-text">New York Times - World News Edition</p>
   </div>
 </div>
 </div>
@@ -55,9 +55,6 @@
     {{#unless this.note}}
     <button type="button" class="addnote-button" value="{{this._id}}">Add A Note</button>
     {{/unless}}
-    {{#if this.note}}
-    <button type="button" class="addnote-button" value="{{this._id}}">Edit Note</button>
-    {{/if}}
   </form>
   </h2>
   <summary>{{this.summary}}</summary>
