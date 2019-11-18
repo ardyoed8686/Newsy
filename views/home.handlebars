@@ -36,14 +36,34 @@
 </div>
 </div>
 
+<div class="message">
+	<h2>{{message}}</h3>
+</div>
+
 {{!-- article container --}}
 <div class="container-fluid article-container">
+  {{#each articles}}
   <div class="card">
-  <h5 class="card-header"></h5>
   <a href="#" class="btn btn-success save">SAVE ARTICLE</a>
   <div class="card-body">
-    <h5 class="card-title">Special title treatment</h5>
-    <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+  <div class="story-body" id={{this._id}}>
+  <h2>
+    <a href="{{this.link}}" target="_blank">{{this.title}}</a>
+  </h2>
+  <form action="/save/{{this._id}}" method="POST">
+    <button type="submit" class="status" value="{{this.status}}">{{this.status}}</button>
+    {{#unless this.note}}
+    <button type="button" class="addnote-button" value="{{this._id}}">Add A Note</button>
+    {{/unless}}
+    {{#if this.note}}
+    <button type="button" class="addnote-button" value="{{this._id}}">Edit Note</button>
+    {{/if}}
+  </form>
+  </h2>
+  <summary>{{this.summary}}</summary>
+  </div>
+  {{/each}}
+    
     
   </div>
 </div>
