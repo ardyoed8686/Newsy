@@ -38,8 +38,39 @@ mongoose.connect(MONGODB_URI);
 
 // Routes
 
+// route to scrape articles
+app.get("/scrape", function(req, res) {
+	// First, we grab the body of the html with axios
+	axios.get("https://www.nytimes.com/section/world")
+	.then(function(response) {
+	  var $ = cheerio.load(response.data);
+	  $("css-ye6x8s.css-1cp3ece.css-1l4spti").each(function(i, element) {
+	   
+		var result = {};
+		result.title = $(this).find("a").find("div").find("h2.css-1j9dxys").text().trim();
+		result.link = $(this).find("a").attr("href");
+		result.summary = $(element).find("a").find("p.css-1echdzn").text().trim();
+  
+		// Create a new Article using the `result` object built from scraping
+		db.Article.create(result)
+		  .then(function(dbArticle) {
+			// View the added result in the console
+			console.log(dbArticle);
+		  })
+		  .catch(function(err) {
+			// If an error occurred, log it
+			console.log(err);
+		  });
+	  });
+  
+	  // Send a message to the client
+	  res.send("Scrape Complete");
+	  res.redirect("/");
+	});
+  });
+
 app.get("/", function(req, res) {
-	Article.find({}, null, {sort: {created: -1}}, function(err, data) {
+	db.Article.find({}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
 			res.render("placeholder", {message: "Nothing scraped yet. Please click \"Scrape New Articles\" for new listings."});
 		}
@@ -49,37 +80,10 @@ app.get("/", function(req, res) {
 	});
 });
 
-app.get("/scrape", function(req, res) {
-  // First, we grab the body of the html with axios
-  axios.get("https://www.nytimes.com/section/world").then(function(response) {
-    var $ = cheerio.load(response.data);
-    $("div.story-body").each(function(i, element) {
-     
-      var result = {};
-      result.title = $(this).find("h2.headline").text().trim();
-      result.link = $(this).find("a").attr("href");
-      result.summary = $(element).find("p.summary").text().trim();
 
-      // Create a new Article using the `result` object built from scraping
-      db.Article.create(result)
-        .then(function(dbArticle) {
-          // View the added result in the console
-          console.log(dbArticle);
-        })
-        .catch(function(err) {
-          // If an error occurred, log it
-          console.log(err);
-        });
-    });
-
-    // Send a message to the client
-    res.send("Scrape Complete");
-    res.redirect("/");
-  });
-});
 
 app.get("/saved", function(req, res) {
-	Article.find({issaved: true}, null, {sort: {created: -1}}, function(err, data) {
+	db.Article.find({issaved: true}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
 			res.render("placeholder", {message: "You have not saved any articles yet. Try saving some articles by clicking \"Save Article\"!"});
 		}
@@ -89,31 +93,35 @@ app.get("/saved", function(req, res) {
 	});
 });
 
-app.get("/:id", function(req, res) {
-	Article.findById(req.params.id, function(err, data) {
+app.get("/articles/:id", function(req, res) {
+	db.Article.findOne({_id: req.params.id}, function(err, data) {
 		res.json(data);
-	})
-});
-
-app.post("/note/:id", function(req, res) {
-	var note = new Note(req.body);
-	note.save(function(err, doc) {
-		if (err) throw err;
-		Article.findByIdAndUpdate(req.params.id, {$set: {"note": doc._id}}, {new: true}, function(err, newdoc) {
-			if (err) throw err;
-			else {
-				res.send(newdoc);
-			}
-		});
 	});
 });
 
-app.get("/note/:id", function(req, res) {
-	var id = req.params.id;
-	Article.findById(id).populate("note").exec(function(err, data) {
-		res.send(data.note);
+app.post("/articles/:id", function(req, res) {
+	db.Note.create(req.body)
+	.then(function (dbNote) {
+	  return db.Article.findOneAndUpdate({}, {$set: { note: dbNote._id} }, { new: true });
 	})
-})
+	.then(function (dbArticle) {
+	  res.json(dbArticle);
+	})
+	.catch(function (err) {
+	  res.json(err);
+	});
+  });
+
+  app.get("/articles/:id", function(req, res) {
+	db.Article.findOne({_id: req.params.id})
+	.populate("note")
+	.then(function (dbArticle) {
+	  res.json(dbArticle);
+	})
+	.catch(function (err) {
+	  res.json(err)
+	});
+  });
 
 
 // Start the server
