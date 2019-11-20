@@ -23,7 +23,7 @@ app.use(logger("dev"));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 // Make public a static folder
-app.use(express.static("/public"));
+app.use(express.static("public"));
 
 app.engine("handlebars", exphbs({defaultLayout: "main"}));
 app.set("view engine", "handlebars");
@@ -44,12 +44,14 @@ app.get("/scrape", function(req, res) {
 	axios.get("https://www.nytimes.com/section/world")
 	.then(function(response) {
 	  var $ = cheerio.load(response.data);
-	  $("css-ye6x8s.css-1cp3ece.css-1l4spti").each(function(i, element) {
+	  $(".css-ye6x8s .css-1cp3ece .css-1l4spti").each(function(i, element) {
 	   
 		var result = {};
-		result.title = $(this).find("a").find("div").find("h2.css-1j9dxys").text().trim();
+		result.title = $(this).find("a").find("h2.css-1j9dxys").text().trim();
 		result.link = $(this).find("a").attr("href");
+		
 		result.summary = $(element).find("a").find("p.css-1echdzn").text().trim();
+		console.log(result);
   
 		// Create a new Article using the `result` object built from scraping
 		db.Article.create(result)
@@ -67,15 +69,15 @@ app.get("/scrape", function(req, res) {
 	  res.send("Scrape Complete");
 	  res.redirect("/");
 	});
-  });
+});
 
 app.get("/", function(req, res) {
 	db.Article.find({}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
-			res.render("placeholder", {message: "Nothing scraped yet. Please click \"Scrape New Articles\" for new listings."});
+			res.render("home", {message: "Nothing scraped yet. Please click \"Scrape New Articles\" for new listings."});
 		}
 		else{
-			res.render("index", {articles: data});
+			res.render("home", {articles: data});
 		}
 	});
 });
@@ -85,7 +87,7 @@ app.get("/", function(req, res) {
 app.get("/saved", function(req, res) {
 	db.Article.find({issaved: true}, null, {sort: {created: -1}}, function(err, data) {
 		if(data.length === 0) {
-			res.render("placeholder", {message: "You have not saved any articles yet. Try saving some articles by clicking \"Save Article\"!"});
+			res.render("home", {message: "You have not saved any articles yet. Try saving some articles by clicking \"Save Article\"!"});
 		}
 		else {
 			res.render("saved", {saved: data});
@@ -110,9 +112,9 @@ app.post("/articles/:id", function(req, res) {
 	.catch(function (err) {
 	  res.json(err);
 	});
-  });
+});
 
-  app.get("/articles/:id", function(req, res) {
+app.get("/articles/:id", function(req, res) {
 	db.Article.findOne({_id: req.params.id})
 	.populate("note")
 	.then(function (dbArticle) {
@@ -121,10 +123,10 @@ app.post("/articles/:id", function(req, res) {
 	.catch(function (err) {
 	  res.json(err)
 	});
-  });
+});
 
 
 // Start the server
 app.listen(PORT, function() {
 	console.log("Listening on port:" + PORT);
-   });
+});
