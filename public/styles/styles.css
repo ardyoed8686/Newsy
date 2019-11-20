@@ -1,5 +1,5 @@
 .navbar {
-    background-color: #1da1f2;
+    background-color: #007bff;
     line-height: 2;
 }
 
@@ -8,31 +8,42 @@
 }
 
 .jumbotron {
-    position: absolute;
+    position: relative;
 	margin: 0;
 	padding: 0;
     background-size: cover;
     background-color: #666;
-	opacity: 0.7;
 	width: 100%;
-	height: 70%;
+	height: 100%;
 }
 
-.caption .h1 {
+.background-image {
+	opacity: 0.5;
+}
+
+h1 {
 	z-index: 200;
 	font-family: 'Times New Roman', Times, serif;
 	font-size: 80px;
-	color: white;
+	color: #fff;
+	position: absolute;
+	top: 45%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
-.caption .h2 {
+p {
 	font-family: 'Times New Roman', Times, serif;
-	font-size: 30px;
-	color: white;
+	font-size: 25px;
+	color: #fff;
+	position: absolute;
+	top: 60%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 h2{
-	background-color: #1da1f2;
+	background-color: #007bff;
 	font-family: Verdana, Geneva, Tahoma, sans-serif;
     text-align: left ;
     font-size: 20px;
@@ -106,7 +117,7 @@ header button {
 }
 
 .story-body h2 {
-	background-color: #1da1f2;
+	background-color: #007bff;
 }
 
 .story-body a {
@@ -207,9 +218,6 @@ header button {
 	font-size: 15px;
 } */
 
-#container {
-	margin-bottom: 200px;
-}
 
 footer {
 	position: fixed;
@@ -220,6 +228,5 @@ footer {
 	background-color: #aaa;
 	color: #ddd;
 	font-size: 15px;
-	border-top: 8px solid #3e9cfc;
-	opacity: 1;
+	border-top: 8px solid #007bff;
 } 
