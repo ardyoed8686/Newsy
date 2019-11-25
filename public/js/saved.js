@@ -1,16 +1,16 @@
 $(document).ready(function() {
     var articleContainer = $(".article-container");
-   $(document).on("click", ".btn.delete", handleDeleteArticle);
+   $(document).on("click", ".btn.delete",);
    $(document).on("click", ".btn.notes", handleArticleNotes);
-   $(document).on("click", ".btn.save", handleSaveNote);
-   $(document).on("click", ".btn.note-delete", handleDeleteNote);
+   $(document).on("click", ".btn.save", handleNoteSave);
+   $(document).on("click", ".btn.note-delete", handleNoteDelete);
  
     initPage();
  
    function initPage() {
   
      articleContainer.empty();
-     $.get("/api/headlines?saved=true").then(function(data) {
+     $.get("/api/articles?isSaved=true").then(function(data) {
    
        if (data && data.length) {
          renderArticles(data);
@@ -38,8 +38,8 @@ $(document).ready(function() {
          "<div class='panel panel-default'>",
          "<div class='panel-heading'>",
          "<h3>",
-         "<a class='article-link' target='_blank' href='" + article.url + "'>",
-         article.headline,
+         "<a class='article-link' target='_blank' href='" + article.link + "'>",
+         article.title,
          "</a>",
          "<a class='btn btn-info delete'>",
          "Delete From Saved",
@@ -111,13 +111,13 @@ $(document).ready(function() {
      $(".note-container").append(notesToRender);
    }
  
-   function handleDeleteArticle() {
+   function() {
     
      var articleToDelete = $(this).parents(".panel").data();
      
      $.ajax({
        method: "DELETE",
-       url: "/api/headlines/" + articleToDelete._id
+       url: "/api/articles/" + articleToDelete._id
      }).then(function(data) {
       
        if (data.ok) {
@@ -160,7 +160,7 @@ $(document).ready(function() {
      });
    }
  
-   function handleSaveNote() {
+   function handleNoteSave() {
     
      var noteData;
      var newNote = $(".bootbox-body textarea").val().trim();
@@ -177,7 +177,7 @@ $(document).ready(function() {
      }
    }
  
-   function handleDeleteNote() {
+   function handleNoteDelete() {
      
      var noteToDelete = $(this).data("_id");
     

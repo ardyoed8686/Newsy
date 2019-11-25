@@ -9,7 +9,7 @@ $(document).ready(function() {
 
   function initPage() {
     articleContainer.empty();
-    $.get("/api/headlines?saved=false").then(function(data) {
+    $.get("/api/articles?saved=false").then(function(data) {
       if (data && data.length) {
         renderArticles(data);
       }
@@ -33,7 +33,7 @@ $(document).ready(function() {
     saveArticle.saved = true;
       $.ajax({
       method: "PUT",
-      url: "/api/headlines",
+      url: "/api/articles",
       data: saveArticle
     }).then(function(data) {
 
@@ -57,8 +57,8 @@ $(document).ready(function() {
         "<div class='panel panel-default'>",
         "<div class='panel-heading'>",
         "<h3>",
-        "<a class='article-link' target='_blank' href='" + article.url + "'>",
-        article.headline,
+        "<a class='article-link' target='_blank' href='" + article.link + "'>",
+        article.title,
         "</a>",
         "<a class='btn btn-info save'>",
         "Save Article",

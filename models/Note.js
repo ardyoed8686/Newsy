@@ -6,10 +6,12 @@ var Schema = mongoose.Schema;
 // Using the Schema constructor, create a new NoteSchema object
 
 var NoteSchema = new Schema({
-  // `title` is of type String
-  title: String,
-  // `body` is of type String
-  body: String,
+  // id of article attached to note
+  _headlineId: {
+    type: Schema.Types.ObjectId,
+    ref: "Headline"
+  },
+  
   // `note` is of type String
   noteText: String,
   // `date` is of type String
